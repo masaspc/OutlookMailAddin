@@ -48,34 +48,11 @@
       <Hosts>
         <Host xsi:type="MailHost">
           <DesktopFormFactor>
-            <!-- メッセージ作成用のTask Pane -->
+            <!-- 送信イベント用のFunction File -->
             <FunctionFile resid="Commands.Url"/>
 
-            <!-- メッセージタブの拡張点 -->
-            <ExtensionPoint xsi:type="MessageComposeCommandSurface">
-              <OfficeTab id="TabDefault">
-                <Group id="msgComposeGroup">
-                  <Label resid="GroupLabel"/>
-                  <Control xsi:type="Button" id="msgComposeOpenPaneButton">
-                    <Label resid="TaskpaneButton.Label"/>
-                    <Supertip>
-                      <Title resid="TaskpaneButton.Label"/>
-                      <Description resid="TaskpaneButton.Tooltip"/>
-                    </Supertip>
-                    <Icon>
-                      <bt:Image size="16" resid="Icon.16x16"/>
-                      <bt:Image size="32" resid="Icon.32x32"/>
-                      <bt:Image size="80" resid="Icon.80x80"/>
-                    </Icon>
-                    <Action xsi:type="ShowTaskpane">
-                      <SourceLocation resid="Taskpane.Url"/>
-                    </Action>
-                  </Control>
-                </Group>
-              </OfficeTab>
-            </ExtensionPoint>
-
             <!-- 送信イベントの拡張点 -->
+            <!-- ユーザーが送信ボタンをクリックしたときに、ダイアログウィンドウを開いてチェックを実行 -->
             <ExtensionPoint xsi:type="LaunchEvent">
               <LaunchEvents>
                 <LaunchEvent Type="OnMessageSend" FunctionName="onMessageSend" SendMode="PromptUser" />
@@ -94,14 +71,12 @@
         </bt:Images>
         <bt:Urls>
           <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
-          <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
         </bt:Urls>
         <bt:ShortStrings>
-          <bt:String id="GroupLabel" DefaultValue="Send Guard"/>
-          <bt:String id="TaskpaneButton.Label" DefaultValue="送信チェック"/>
+          <!-- 将来的な拡張用 -->
         </bt:ShortStrings>
         <bt:LongStrings>
-          <bt:String id="TaskpaneButton.Tooltip" DefaultValue="メール送信前のチェックを実行します"/>
+          <!-- 将来的な拡張用 -->
         </bt:LongStrings>
       </Resources>
     </VersionOverrides>

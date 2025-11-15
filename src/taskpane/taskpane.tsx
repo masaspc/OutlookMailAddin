@@ -13,7 +13,6 @@ interface AppState {
   isLoading: boolean;
   isSettingsOpen: boolean;
   settings: Settings;
-  isDialogMode: boolean;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -24,17 +23,12 @@ class App extends React.Component<{}, AppState> {
       isLoading: true,
       isSettingsOpen: false,
       settings: SettingsStorage.loadSettings(),
-      isDialogMode: false,
     };
   }
 
   async componentDidMount() {
     // Office.jsの初期化を待つ
     await Office.onReady();
-
-    // ダイアログモードかどうかを判定
-    const isDialogMode = window.location.href.includes('_host_Info');
-    this.setState({ isDialogMode });
 
     // メールのチェックを実行
     await this.runChecks();
@@ -133,29 +127,25 @@ class App extends React.Component<{}, AppState> {
 
   /**
    * 送信ボタンをクリックしたときの処理
+   * 親ウィンドウ（Outlook）にメッセージを送信して、メール送信を許可する
    */
   handleSend = () => {
-    if (this.state.isDialogMode) {
-      // ダイアログモードの場合は、親ウィンドウにメッセージを送信
+    try {
       Office.context.ui.messageParent(JSON.stringify({ action: 'send' }));
-    } else {
-      // 通常モードの場合は、メールを送信
-      Office.context.mailbox.item?.displayReplyAllForm({
-        htmlBody: '',
-      });
+    } catch (error) {
+      console.error('送信メッセージの送信に失敗しました:', error);
     }
   };
 
   /**
-   * キャンセルボタンをクリックしたときの処理
+   * キャンセルボタン（編集に戻る）をクリックしたときの処理
+   * 親ウィンドウ（Outlook）にメッセージを送信して、メール送信をキャンセルする
    */
   handleCancel = () => {
-    if (this.state.isDialogMode) {
-      // ダイアログモードの場合は、親ウィンドウにメッセージを送信
+    try {
       Office.context.ui.messageParent(JSON.stringify({ action: 'cancel' }));
-    } else {
-      // 通常モードの場合は、Task Paneを閉じる
-      Office.context.ui.closeContainer();
+    } catch (error) {
+      console.error('キャンセルメッセージの送信に失敗しました:', error);
     }
   };
 
