@@ -5,9 +5,7 @@
 
 /* global Office */
 
-import { SettingsStorage } from '../storage/SettingsStorage';
-import { CheckerManager } from '../checker/CheckerManager';
-import { MailData, CheckResult } from '../types';
+import { MailData } from '../types';
 
 Office.onReady(() => {
   // Office.jsが初期化された後の処理
@@ -123,15 +121,9 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     // メールデータを取得
     const mailData = await getMailData(item);
 
-    // 設定を読み込み
-    const settings = SettingsStorage.loadSettings();
-
-    // チェックを実行
-    const checkResults = await CheckerManager.checkAll(mailData, settings);
-
-    // チェック結果とメールデータをBase64エンコードしてURLパラメータとして渡す
+    // メールデータをBase64エンコードしてURLパラメータとして渡す
+    // チェック処理はダイアログ内で実行する（処理時間短縮のため）
     const dataToPass = {
-      checkResults,
       mailData: {
         subject: mailData.subject,
         body: mailData.body,
@@ -145,7 +137,6 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
           attachmentType: a.attachmentType,
         })),
       },
-      settings,
     };
     const dataJson = JSON.stringify(dataToPass);
     const dataBase64 = btoa(encodeURIComponent(dataJson));

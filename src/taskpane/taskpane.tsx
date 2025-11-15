@@ -5,6 +5,7 @@ import { ConfirmationPanel } from './components/ConfirmationPanel';
 import { SettingsPanel } from './components/SettingsPanel';
 import { CheckResult, Settings } from '../types';
 import { SettingsStorage } from '../storage/SettingsStorage';
+import { CheckerManager } from '../checker/CheckerManager';
 import './taskpane.css';
 
 interface MailDataDisplay {
@@ -50,9 +51,9 @@ class App extends React.Component<{}, AppState> {
   }
 
   /**
-   * URLパラメータからチェック結果とメールデータを読み取る
+   * URLパラメータからメールデータを読み取り、チェック処理を実行する
    */
-  loadCheckResults = () => {
+  loadCheckResults = async () => {
     this.setState({ isLoading: true });
 
     try {
@@ -81,10 +82,30 @@ class App extends React.Component<{}, AppState> {
       const dataJson = decodeURIComponent(atob(dataBase64));
       const data = JSON.parse(dataJson);
 
+      const mailData = data.mailData;
+      if (!mailData) {
+        throw new Error('メールデータがありません');
+      }
+
+      // 設定を読み込み
+      const settings = this.state.settings;
+
+      // チェックを実行（ダイアログ内で実行）
+      const checkResults = await CheckerManager.checkAll(
+        {
+          subject: mailData.subject || '',
+          body: mailData.body || '',
+          to: mailData.to || [],
+          cc: mailData.cc || [],
+          bcc: mailData.bcc || [],
+          attachments: mailData.attachments || [],
+        },
+        settings
+      );
+
       this.setState({
-        checkResults: data.checkResults || [],
-        mailData: data.mailData || null,
-        settings: data.settings || this.state.settings,
+        checkResults,
+        mailData,
         isLoading: false,
       });
     } catch (error) {
