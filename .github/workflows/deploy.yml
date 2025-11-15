@@ -38,7 +38,7 @@ jobs:
 
       - name: Copy necessary files to dist
         run: |
-          cp manifest-production.xml dist/manifest.xml
+          cp manifest.xml dist/manifest.xml
           cp .nojekyll dist/
 
       - name: Upload artifact
