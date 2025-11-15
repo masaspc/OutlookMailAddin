@@ -107,6 +107,55 @@ async function getAttachments(item: Office.MessageCompose): Promise<any[]> {
 }
 
 /**
+ * メール内容に応じて最適なダイアログサイズを計算する
+ * @param mailData メールデータ
+ * @returns ダイアログのheightとwidth（パーセンテージ）
+ */
+function calculateOptimalDialogSize(mailData: any): { height: number; width: number } {
+  // 基本サイズ
+  let height = 50;
+  let width = 50;
+
+  // 外部宛先の数をカウント（社内ドメインフィルタリングは後で行うため、ここでは全宛先をカウント）
+  const totalRecipients = (mailData.to?.length || 0) + (mailData.cc?.length || 0) + (mailData.bcc?.length || 0);
+
+  // 添付ファイルの数
+  const attachmentCount = mailData.attachments?.length || 0;
+
+  // 件名の有無
+  const hasSubject = mailData.subject && mailData.subject.trim() !== '';
+
+  // 本文の有無
+  const hasBody = mailData.body && mailData.body.trim() !== '';
+
+  // 宛先が多い場合は高さを追加（1件あたり3%、最大30%）
+  if (totalRecipients > 0) {
+    height += Math.min(totalRecipients * 3, 30);
+  }
+
+  // 添付ファイルが多い場合は高さを追加（1件あたり4%、最大20%）
+  if (attachmentCount > 0) {
+    height += Math.min(attachmentCount * 4, 20);
+  }
+
+  // 件名がある場合
+  if (hasSubject) {
+    height += 5;
+  }
+
+  // 本文がある場合
+  if (hasBody) {
+    height += 8;
+  }
+
+  // 最小・最大値の制限
+  height = Math.max(40, Math.min(90, height));
+  width = Math.max(50, Math.min(70, width));
+
+  return { height, width };
+}
+
+/**
  * OnMessageSendイベントハンドラー
  *
  * このハンドラーは、ユーザーが送信ボタンをクリックしたときに呼び出されます。
@@ -166,6 +215,10 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     console.log('Opening dialog with URL:', dialogUrl);
     console.log('Base URL:', baseUrl);
 
+    // 内容に応じて最適なダイアログサイズを計算
+    const dialogSize = calculateOptimalDialogSize(mailData);
+    console.log('Calculated dialog size:', dialogSize);
+
     // ダイアログウィンドウを開く
     // promptBeforeOpen: false でOfficeの許可プロンプトを無効化
     // displayInIframe: false でポップアップ表示（URLバーが表示される）
@@ -173,8 +226,8 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     Office.context.ui.displayDialogAsync(
       dialogUrl,
       {
-        height: 80,
-        width: 60,
+        height: dialogSize.height,
+        width: dialogSize.width,
         displayInIframe: false,
         promptBeforeOpen: false
       },
