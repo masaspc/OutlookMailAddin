@@ -150,12 +150,14 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     console.log('Base URL:', baseUrl);
 
     // ダイアログウィンドウを開く
+    // promptBeforeOpen: false でOfficeの許可プロンプトを無効化
     Office.context.ui.displayDialogAsync(
       dialogUrl,
       {
         height: 80,
         width: 60,
-        displayInIframe: false
+        displayInIframe: false,
+        promptBeforeOpen: false
       },
       (result) => {
         if (result.status === Office.AsyncResultStatus.Failed) {
