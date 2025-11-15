@@ -217,6 +217,20 @@ body {
   margin: 12px 0;
 }
 
+/* 横並びリスト（メールアドレス、添付ファイル用） */
+.horizontal-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.horizontal-list .checkbox-item {
+  margin: 0;
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+
 .checkbox-item {
   display: flex;
   align-items: center;
@@ -246,6 +260,22 @@ body {
 }
 
 .checkbox-item.external-recipient input[type="checkbox"]:checked + span {
+  color: #107c10;
+  font-weight: 600;
+}
+
+/* 添付ファイルの checkbox-item - 黄色系 */
+.checkbox-item.attachment-item {
+  background-color: #fff9db;
+  border-color: #ffd43b;
+}
+
+.checkbox-item.attachment-item:hover {
+  background-color: #fff3c4;
+  border-color: #ffc107;
+}
+
+.checkbox-item.attachment-item input[type="checkbox"]:checked + span {
   color: #107c10;
   font-weight: 600;
 }
@@ -314,21 +344,6 @@ body {
   border: 1px solid #51cf66;
 }
 
-.attachment-list {
-  list-style: none;
-  padding: 0;
-  margin: 8px 0 0 0;
-}
-
-.attachment-list li {
-  padding: 8px;
-  background-color: #fff9db;
-  margin-bottom: 4px;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  border: 1px solid #ffd43b;
-}
 
 .error-message {
   padding: 32px;

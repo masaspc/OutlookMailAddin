@@ -27,7 +27,7 @@ interface ConfirmationState {
   externalRecipientsConfirmed: Set<string>;
   subjectConfirmed: boolean;
   bodyConfirmed: boolean;
-  attachmentsConfirmed: boolean;
+  attachmentsConfirmed: Set<string>;
 }
 
 export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, ConfirmationState> {
@@ -37,7 +37,7 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
       externalRecipientsConfirmed: new Set(),
       subjectConfirmed: false,
       bodyConfirmed: false,
-      attachmentsConfirmed: false,
+      attachmentsConfirmed: new Set(),
     };
   }
 
@@ -55,12 +55,31 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
   };
 
   /**
-   * すべての外部宛先を取得
+   * すべての外部宛先を取得（タイプ付き）
    */
-  getExternalRecipients = (): string[] => {
+  getExternalRecipients = (): Array<{ email: string; type: 'TO' | 'CC' | 'BCC' }> => {
     const { mailData } = this.props;
-    const allRecipients = [...mailData.to, ...mailData.cc, ...mailData.bcc];
-    return allRecipients.filter((email) => this.isExternalDomain(email));
+    const recipients: Array<{ email: string; type: 'TO' | 'CC' | 'BCC' }> = [];
+
+    mailData.to.forEach(email => {
+      if (this.isExternalDomain(email)) {
+        recipients.push({ email, type: 'TO' });
+      }
+    });
+
+    mailData.cc.forEach(email => {
+      if (this.isExternalDomain(email)) {
+        recipients.push({ email, type: 'CC' });
+      }
+    });
+
+    mailData.bcc.forEach(email => {
+      if (this.isExternalDomain(email)) {
+        recipients.push({ email, type: 'BCC' });
+      }
+    });
+
+    return recipients;
   };
 
   /**
@@ -72,20 +91,24 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
     const { externalRecipientsConfirmed, subjectConfirmed, bodyConfirmed, attachmentsConfirmed } = this.state;
 
     // 外部宛先がある場合、すべて確認されているか
-    const allExternalConfirmed = externalRecipients.every((email) =>
-      externalRecipientsConfirmed.has(email)
+    const allExternalConfirmed = externalRecipients.every((recipient) =>
+      externalRecipientsConfirmed.has(recipient.email)
     );
 
     // 件名・本文の確認
     let needsSubjectConfirm = mailData.subject && mailData.subject.trim() !== '';
     let needsBodyConfirm = mailData.body && mailData.body.trim() !== '';
+
+    // 添付ファイルの確認（すべての添付ファイルがチェックされているか）
     let needsAttachmentsConfirm = mailData.attachments && mailData.attachments.length > 0;
+    const allAttachmentsConfirmed = !needsAttachmentsConfirm ||
+      mailData.attachments.every((attachment) => attachmentsConfirmed.has(attachment.name));
 
     return (
       allExternalConfirmed &&
       (!needsSubjectConfirm || subjectConfirmed) &&
       (!needsBodyConfirm || bodyConfirmed) &&
-      (!needsAttachmentsConfirm || attachmentsConfirmed)
+      allAttachmentsConfirmed
     );
   };
 
@@ -101,6 +124,21 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
         newSet.add(email);
       }
       return { externalRecipientsConfirmed: newSet };
+    });
+  };
+
+  /**
+   * 添付ファイルのチェックボックスを切り替え
+   */
+  toggleAttachment = (attachmentName: string) => {
+    this.setState((prevState) => {
+      const newSet = new Set(prevState.attachmentsConfirmed);
+      if (newSet.has(attachmentName)) {
+        newSet.delete(attachmentName);
+      } else {
+        newSet.add(attachmentName);
+      }
+      return { attachmentsConfirmed: newSet };
     });
   };
 
@@ -148,15 +186,15 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
           <div className="section external-recipients">
             <h3>⚠️ 外部ドメイン宛先の確認</h3>
             <p>以下の外部アドレスに送信します。確認してチェックしてください：</p>
-            <div className="recipient-list">
-              {externalRecipients.map((email) => (
-                <label key={email} className="checkbox-item external-recipient">
+            <div className="recipient-list horizontal-list">
+              {externalRecipients.map((recipient) => (
+                <label key={recipient.email} className="checkbox-item external-recipient">
                   <input
                     type="checkbox"
-                    checked={externalRecipientsConfirmed.has(email)}
-                    onChange={() => this.toggleExternalRecipient(email)}
+                    checked={externalRecipientsConfirmed.has(recipient.email)}
+                    onChange={() => this.toggleExternalRecipient(recipient.email)}
                   />
-                  <span>{email}</span>
+                  <span>({recipient.type}) {recipient.email}</span>
                 </label>
               ))}
             </div>
@@ -203,22 +241,18 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
         {mailData.attachments && mailData.attachments.length > 0 && (
           <div className="section attachments-section">
             <h3>📎 添付ファイル</h3>
-            <div className="horizontal-layout">
-              <label className="checkbox-item inline-checkbox">
-                <input
-                  type="checkbox"
-                  checked={attachmentsConfirmed}
-                  onChange={(e) => this.setState({ attachmentsConfirmed: e.target.checked })}
-                />
-                <span>添付ファイルを確認しました</span>
-              </label>
-              <ul className="attachment-list inline-attachments">
-                {mailData.attachments.map((attachment, index) => (
-                  <li key={index}>
-                    {attachment.name} ({Math.round(attachment.size / 1024)} KB)
-                  </li>
-                ))}
-              </ul>
+            <p>以下の添付ファイルを確認してチェックしてください：</p>
+            <div className="attachment-list horizontal-list">
+              {mailData.attachments.map((attachment, index) => (
+                <label key={index} className="checkbox-item attachment-item">
+                  <input
+                    type="checkbox"
+                    checked={attachmentsConfirmed.has(attachment.name)}
+                    onChange={() => this.toggleAttachment(attachment.name)}
+                  />
+                  <span>{attachment.name} ({Math.round(attachment.size / 1024)} KB)</span>
+                </label>
+              ))}
             </div>
           </div>
         )}
