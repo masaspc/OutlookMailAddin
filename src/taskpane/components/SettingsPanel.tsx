@@ -42,16 +42,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSave, 
     });
   };
 
-  const handleTimeChange = (category: keyof Settings, field: string, value: string) => {
-    setLocalSettings({
-      ...localSettings,
-      [category]: {
-        ...localSettings[category],
-        [field]: value,
-      },
-    });
-  };
-
   const handleSave = () => {
     onSave(localSettings);
   };
@@ -199,55 +189,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSave, 
               rows={2}
             />
           </div>
-        </section>
-
-        {/* 時間帯チェック */}
-        <section className="settings-section">
-          <h3>⏰ 時間帯チェック</h3>
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={localSettings.timeCheck.enabled}
-              onChange={() => handleToggle('timeCheck', 'enabled')}
-            />
-            有効化
-          </label>
-
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={localSettings.timeCheck.warnLateNight}
-              onChange={() => handleToggle('timeCheck', 'warnLateNight')}
-            />
-            深夜・早朝送信を警告
-          </label>
-
-          <div className="setting-item">
-            <label>深夜開始時刻:</label>
-            <input
-              type="time"
-              value={localSettings.timeCheck.lateNightStart}
-              onChange={(e) => handleTimeChange('timeCheck', 'lateNightStart', e.target.value)}
-            />
-          </div>
-
-          <div className="setting-item">
-            <label>早朝終了時刻:</label>
-            <input
-              type="time"
-              value={localSettings.timeCheck.lateNightEnd}
-              onChange={(e) => handleTimeChange('timeCheck', 'lateNightEnd', e.target.value)}
-            />
-          </div>
-
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={localSettings.timeCheck.warnWeekend}
-              onChange={() => handleToggle('timeCheck', 'warnWeekend')}
-            />
-            休日送信を警告
-          </label>
         </section>
       </div>
 

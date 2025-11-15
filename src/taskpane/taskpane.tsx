@@ -155,11 +155,6 @@ class App extends React.Component<{}, AppState> {
    * 設定を閉じる
    */
   handleCloseSettings = () => {
-    // リボンボタンから開いた場合（mailDataがnull）は、設定画面を閉じない
-    if (this.state.mailData === null) {
-      // 何もしない（設定画面を開いたまま）
-      return;
-    }
     this.setState({ isSettingsOpen: false });
   };
 
@@ -169,19 +164,33 @@ class App extends React.Component<{}, AppState> {
   handleSaveSettings = async (settings: Settings) => {
     try {
       await SettingsStorage.saveSettings(settings);
-      // リボンボタンから開いた場合（mailDataがnull）は、設定画面を開いたまま
-      const shouldCloseSettings = this.state.mailData !== null;
-      this.setState({ settings, isSettingsOpen: !shouldCloseSettings });
-      alert('設定を保存しました。次回の送信時から反映されます。');
+      this.setState({ settings });
+      // 保存成功（メッセージなし）
     } catch (error) {
       console.error('設定の保存に失敗しました:', error);
-      alert('設定の保存に失敗しました。もう一度お試しください。');
+      // エラーメッセージをコンソールに出力
     }
   };
 
   render() {
     const { checkResults, mailData, isLoading, isSettingsOpen, settings } = this.state;
 
+    // リボンボタンから開いた場合（mailDataがnull）は、常に設定画面を表示
+    if (mailData === null) {
+      return (
+        <FluentProvider theme={webLightTheme}>
+          <div className="app-container">
+            <SettingsPanel
+              settings={settings}
+              onSave={this.handleSaveSettings}
+              onClose={this.handleCloseSettings}
+            />
+          </div>
+        </FluentProvider>
+      );
+    }
+
+    // メール送信時の確認ダイアログの場合
     return (
       <FluentProvider theme={webLightTheme}>
         <div className="app-container">
