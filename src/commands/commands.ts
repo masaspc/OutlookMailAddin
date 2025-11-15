@@ -81,18 +81,29 @@ async function getRecipients(recipients: Office.Recipients | undefined): Promise
 
 /**
  * 添付ファイル情報を取得する
- * MessageComposeでは直接アクセスできないため、itemをanyにキャストして取得
+ * MessageComposeではgetAttachmentsAsyncを使用
  */
 async function getAttachments(item: Office.MessageCompose): Promise<any[]> {
-  try {
-    // MessageComposeではattachmentsプロパティが型定義にないが、
-    // 実際には存在するため、anyにキャストして取得
-    const attachments = (item as any).attachments || [];
-    return attachments;
-  } catch (error) {
-    console.error('添付ファイルの取得に失敗しました:', error);
-    return [];
-  }
+  return new Promise((resolve) => {
+    // Office.jsのgetAttachmentsAsyncメソッドを使用
+    if (item.getAttachmentsAsync) {
+      item.getAttachmentsAsync((result) => {
+        if (result.status === Office.AsyncResultStatus.Succeeded) {
+          console.log('添付ファイル取得成功:', result.value);
+          resolve(result.value || []);
+        } else {
+          console.error('添付ファイルの取得に失敗しました:', result.error);
+          resolve([]);
+        }
+      });
+    } else {
+      // フォールバック: anyにキャストして直接取得
+      console.log('getAttachmentsAsyncが利用できません。直接取得を試みます。');
+      const attachments = (item as any).attachments || [];
+      console.log('直接取得した添付ファイル:', attachments);
+      resolve(attachments);
+    }
+  });
 }
 
 /**

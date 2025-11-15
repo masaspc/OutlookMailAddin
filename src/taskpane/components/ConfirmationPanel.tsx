@@ -145,12 +145,12 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
 
         {/* 外部宛先の確認 */}
         {externalRecipients.length > 0 && (
-          <div className="section">
+          <div className="section external-recipients">
             <h3>⚠️ 外部ドメイン宛先の確認</h3>
             <p>以下の外部アドレスに送信します。確認してチェックしてください：</p>
             <div className="recipient-list">
               {externalRecipients.map((email) => (
-                <label key={email} className="checkbox-item">
+                <label key={email} className="checkbox-item external-recipient">
                   <input
                     type="checkbox"
                     checked={externalRecipientsConfirmed.has(email)}
@@ -165,7 +165,7 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
 
         {/* 件名の確認 */}
         {mailData.subject && mailData.subject.trim() !== '' && (
-          <div className="section">
+          <div className="section subject-section">
             <h3>📧 件名</h3>
             <div className="subject-box">{mailData.subject}</div>
             <label className="checkbox-item">
@@ -181,7 +181,7 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
 
         {/* 本文の確認 */}
         {mailData.body && mailData.body.trim() !== '' && (
-          <div className="section">
+          <div className="section body-section">
             <h3>📝 本文（プレビュー）</h3>
             <div className="body-preview">{this.getBodyPreview()}</div>
             <label className="checkbox-item">
@@ -197,7 +197,7 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
 
         {/* 添付ファイルの確認 */}
         {mailData.attachments && mailData.attachments.length > 0 && (
-          <div className="section">
+          <div className="section attachments-section">
             <h3>📎 添付ファイル</h3>
             <ul className="attachment-list">
               {mailData.attachments.map((attachment, index) => (
