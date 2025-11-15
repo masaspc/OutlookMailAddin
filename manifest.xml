@@ -20,7 +20,7 @@
   </Hosts>
   <Requirements>
     <Sets>
-      <Set Name="Mailbox" MinVersion="1.13"/>
+      <Set Name="Mailbox" MinVersion="1.10"/>
     </Sets>
   </Requirements>
   <FormSettings>
@@ -41,24 +41,19 @@
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
       <Requirements>
-        <bt:Sets DefaultMinVersion="1.13">
+        <bt:Sets DefaultMinVersion="1.10">
           <bt:Set Name="Mailbox"/>
         </bt:Sets>
       </Requirements>
       <Hosts>
         <Host xsi:type="MailHost">
           <DesktopFormFactor>
-            <!-- 送信イベント用のFunction File -->
-            <FunctionFile resid="Commands.Url"/>
+            <FunctionFile resid="Taskpane.Url"/>
 
-            <!-- 送信イベントの拡張点 -->
-            <!-- ユーザーが送信ボタンをクリックしたときに、ダイアログウィンドウを開いてチェックを実行 -->
             <ExtensionPoint xsi:type="LaunchEvent">
               <LaunchEvents>
                 <LaunchEvent Type="OnMessageSend" FunctionName="onMessageSend" SendMode="PromptUser" />
               </LaunchEvents>
-              <!-- SourceLocation must be after LaunchEvents -->
-              <SourceLocation resid="Commands.Url"/>
             </ExtensionPoint>
           </DesktopFormFactor>
         </Host>
@@ -71,7 +66,7 @@
           <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/commands.html"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="GroupLabel" DefaultValue="Send Guard"/>
