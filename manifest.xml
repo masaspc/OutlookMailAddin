@@ -57,6 +57,8 @@
               <LaunchEvents>
                 <LaunchEvent Type="OnMessageSend" FunctionName="onMessageSend" SendMode="PromptUser" />
               </LaunchEvents>
+              <!-- SourceLocation must be after LaunchEvents -->
+              <SourceLocation resid="Commands.Url"/>
             </ExtensionPoint>
           </DesktopFormFactor>
         </Host>
