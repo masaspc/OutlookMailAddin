@@ -263,27 +263,28 @@ body {
 }
 
 .subject-box {
-  background-color: #f5f5f5;
+  background-color: #e7f5ff;
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 12px;
   font-size: 14px;
-  color: #333;
-  border: 1px solid #ddd;
+  color: #1971c2;
+  border: 1px solid #4dabf7;
+  font-weight: 500;
 }
 
 .body-preview {
-  background-color: #f5f5f5;
+  background-color: #e6fcf5;
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 12px;
   font-size: 13px;
-  color: #333;
+  color: #2f9e44;
   max-height: 150px;
   overflow-y: auto;
   white-space: pre-wrap;
   word-wrap: break-word;
-  border: 1px solid #ddd;
+  border: 1px solid #51cf66;
 }
 
 .attachment-list {
@@ -294,11 +295,12 @@ body {
 
 .attachment-list li {
   padding: 8px;
-  background-color: #f5f5f5;
+  background-color: #fff9db;
   margin-bottom: 4px;
   border-radius: 4px;
   font-size: 14px;
-  color: #333;
+  color: #e67700;
+  border: 1px solid #ffd43b;
 }
 
 .error-message {
