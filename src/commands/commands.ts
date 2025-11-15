@@ -152,7 +152,7 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
       {
         height: 80,
         width: 60,
-        displayInIframe: true
+        displayInIframe: false
       },
       (result) => {
         if (result.status === Office.AsyncResultStatus.Failed) {
