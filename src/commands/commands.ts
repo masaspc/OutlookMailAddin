@@ -129,24 +129,14 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     // チェックを実行
     const checkResults = await CheckerManager.checkAll(mailData, settings);
 
-    // チェック結果をsessionDataに保存
-    await new Promise<void>((resolve, reject) => {
-      item.sessionData.setAsync(
-        'checkResults',
-        JSON.stringify(checkResults),
-        (result) => {
-          if (result.status === Office.AsyncResultStatus.Succeeded) {
-            resolve();
-          } else {
-            reject(new Error('sessionDataの保存に失敗しました'));
-          }
-        }
-      );
-    });
+    // チェック結果をBase64エンコードしてURLパラメータとして渡す
+    const resultsJson = JSON.stringify(checkResults);
+    const resultsBase64 = btoa(encodeURIComponent(resultsJson));
+    const dialogUrl = `https://localhost:3000/taskpane.html?results=${resultsBase64}`;
 
     // ダイアログウィンドウを開く
     Office.context.ui.displayDialogAsync(
-      'https://localhost:3000/taskpane.html',
+      dialogUrl,
       {
         height: 70,
         width: 50,

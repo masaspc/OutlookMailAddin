@@ -29,21 +29,23 @@ class App extends React.Component<{}, AppState> {
     // Office.jsの初期化を待つ
     await Office.onReady();
 
-    // sessionDataからチェック結果を読み取る
-    await this.loadCheckResults();
+    // URLパラメータからチェック結果を読み取る
+    this.loadCheckResults();
   }
 
   /**
-   * sessionDataからチェック結果を読み取る
+   * URLパラメータからチェック結果を読み取る
    */
-  loadCheckResults = async () => {
+  loadCheckResults = () => {
     this.setState({ isLoading: true });
 
     try {
-      const item = Office.context.mailbox.item as Office.MessageCompose;
-      if (!item || !item.sessionData) {
-        // sessionDataがない場合は、デフォルトのメッセージを表示
-        console.warn('sessionDataがありません。問題なしとして扱います。');
+      // URLパラメータを取得
+      const urlParams = new URLSearchParams(window.location.search);
+      const resultsBase64 = urlParams.get('results');
+
+      if (!resultsBase64) {
+        console.warn('URLパラメータにチェック結果がありません。問題なしとして扱います。');
         this.setState({
           checkResults: [
             {
@@ -58,43 +60,13 @@ class App extends React.Component<{}, AppState> {
         return;
       }
 
-      // sessionDataからチェック結果を取得
-      item.sessionData.getAsync('checkResults', (result) => {
-        if (result.status === Office.AsyncResultStatus.Succeeded && result.value) {
-          try {
-            const checkResults = JSON.parse(result.value);
-            this.setState({
-              checkResults,
-              isLoading: false,
-            });
-          } catch (error) {
-            console.error('チェック結果のパースに失敗しました:', error);
-            this.setState({
-              checkResults: [
-                {
-                  severity: 'error',
-                  category: 'body',
-                  message: 'チェックエラー',
-                  details: 'チェック結果の読み込みに失敗しました。',
-                },
-              ],
-              isLoading: false,
-            });
-          }
-        } else {
-          console.warn('sessionDataの取得に失敗しました:', result.error);
-          this.setState({
-            checkResults: [
-              {
-                severity: 'info',
-                category: 'body',
-                message: 'チェック完了',
-                details: '問題は検出されませんでした。',
-              },
-            ],
-            isLoading: false,
-          });
-        }
+      // Base64デコードしてJSONパース
+      const resultsJson = decodeURIComponent(atob(resultsBase64));
+      const checkResults = JSON.parse(resultsJson);
+
+      this.setState({
+        checkResults,
+        isLoading: false,
       });
     } catch (error) {
       console.error('チェック結果の読み込みエラー:', error);
@@ -104,7 +76,7 @@ class App extends React.Component<{}, AppState> {
             severity: 'error',
             category: 'body',
             message: 'チェックエラー',
-            details: 'メールのチェック中にエラーが発生しました。',
+            details: 'チェック結果の読み込みに失敗しました。',
           },
         ],
         isLoading: false,
