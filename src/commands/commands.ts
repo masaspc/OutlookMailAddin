@@ -132,12 +132,18 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     // メールデータを取得
     const mailData = await getMailData(item);
 
+    // 本文が長すぎる場合は切り詰める（URLパラメータの長さ制限対策）
+    const maxBodyLength = 1000; // 最大1000文字
+    const truncatedBody = mailData.body.length > maxBodyLength
+      ? mailData.body.substring(0, maxBodyLength) + '...(以降省略)'
+      : mailData.body;
+
     // メールデータをBase64エンコードしてURLパラメータとして渡す
     // チェック処理はダイアログ内で実行する（処理時間短縮のため）
     const dataToPass = {
       mailData: {
         subject: mailData.subject,
-        body: mailData.body,
+        body: truncatedBody, // 切り詰めた本文を使用
         to: mailData.to,
         cc: mailData.cc,
         bcc: mailData.bcc,
