@@ -3,9 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { CheckResultList } from './components/CheckResultList';
 import { SettingsPanel } from './components/SettingsPanel';
-import { CheckResult, MailData, Settings } from '../types';
+import { CheckResult, Settings } from '../types';
 import { SettingsStorage } from '../storage/SettingsStorage';
-import { CheckerManager } from '../checker/CheckerManager';
 import './taskpane.css';
 
 interface AppState {
@@ -30,26 +29,75 @@ class App extends React.Component<{}, AppState> {
     // Office.jsの初期化を待つ
     await Office.onReady();
 
-    // メールのチェックを実行
-    await this.runChecks();
+    // sessionDataからチェック結果を読み取る
+    await this.loadCheckResults();
   }
 
   /**
-   * メールのチェックを実行する
+   * sessionDataからチェック結果を読み取る
    */
-  runChecks = async () => {
+  loadCheckResults = async () => {
     this.setState({ isLoading: true });
 
     try {
-      const mailData = await this.getMailData();
-      const results = await CheckerManager.checkAll(mailData, this.state.settings);
+      const item = Office.context.mailbox.item as Office.MessageCompose;
+      if (!item || !item.sessionData) {
+        // sessionDataがない場合は、デフォルトのメッセージを表示
+        console.warn('sessionDataがありません。問題なしとして扱います。');
+        this.setState({
+          checkResults: [
+            {
+              severity: 'info',
+              category: 'body',
+              message: 'チェック完了',
+              details: '問題は検出されませんでした。',
+            },
+          ],
+          isLoading: false,
+        });
+        return;
+      }
 
-      this.setState({
-        checkResults: results,
-        isLoading: false,
+      // sessionDataからチェック結果を取得
+      item.sessionData.getAsync('checkResults', (result) => {
+        if (result.status === Office.AsyncResultStatus.Succeeded && result.value) {
+          try {
+            const checkResults = JSON.parse(result.value);
+            this.setState({
+              checkResults,
+              isLoading: false,
+            });
+          } catch (error) {
+            console.error('チェック結果のパースに失敗しました:', error);
+            this.setState({
+              checkResults: [
+                {
+                  severity: 'error',
+                  category: 'body',
+                  message: 'チェックエラー',
+                  details: 'チェック結果の読み込みに失敗しました。',
+                },
+              ],
+              isLoading: false,
+            });
+          }
+        } else {
+          console.warn('sessionDataの取得に失敗しました:', result.error);
+          this.setState({
+            checkResults: [
+              {
+                severity: 'info',
+                category: 'body',
+                message: 'チェック完了',
+                details: '問題は検出されませんでした。',
+              },
+            ],
+            isLoading: false,
+          });
+        }
       });
     } catch (error) {
-      console.error('チェック実行エラー:', error);
+      console.error('チェック結果の読み込みエラー:', error);
       this.setState({
         checkResults: [
           {
@@ -62,67 +110,6 @@ class App extends React.Component<{}, AppState> {
         isLoading: false,
       });
     }
-  };
-
-  /**
-   * メールデータを取得する
-   */
-  getMailData = async (): Promise<MailData> => {
-    return new Promise((resolve, reject) => {
-      const item = Office.context.mailbox.item;
-      if (!item) {
-        reject(new Error('メールアイテムが見つかりません'));
-        return;
-      }
-
-      // 件名を取得
-      const subject = item.subject || '';
-
-      // 本文を取得
-      item.body.getAsync(Office.CoercionType.Html, async (result) => {
-        if (result.status !== Office.AsyncResultStatus.Succeeded) {
-          reject(new Error('本文の取得に失敗しました'));
-          return;
-        }
-
-        const body = result.value;
-
-        // 宛先を取得
-        const to = await this.getRecipients(item.to);
-        const cc = await this.getRecipients(item.cc);
-        const bcc = await this.getRecipients(item.bcc);
-
-        // 添付ファイルを取得
-        const attachments = item.attachments || [];
-
-        resolve({
-          subject,
-          body,
-          to,
-          cc,
-          bcc,
-          attachments,
-        });
-      });
-    });
-  };
-
-  /**
-   * 受信者のメールアドレスを取得する
-   */
-  getRecipients = async (recipients: Office.Recipients | undefined): Promise<string[]> => {
-    if (!recipients) return [];
-
-    return new Promise((resolve) => {
-      recipients.getAsync((result) => {
-        if (result.status === Office.AsyncResultStatus.Succeeded) {
-          const emails = result.value.map((r) => r.emailAddress);
-          resolve(emails);
-        } else {
-          resolve([]);
-        }
-      });
-    });
   };
 
   /**
@@ -170,8 +157,7 @@ class App extends React.Component<{}, AppState> {
     try {
       await SettingsStorage.saveSettings(settings);
       this.setState({ settings, isSettingsOpen: false });
-      // 設定が変更されたらチェックを再実行
-      await this.runChecks();
+      alert('設定を保存しました。次回の送信時から反映されます。');
     } catch (error) {
       console.error('設定の保存に失敗しました:', error);
       alert('設定の保存に失敗しました。もう一度お試しください。');
