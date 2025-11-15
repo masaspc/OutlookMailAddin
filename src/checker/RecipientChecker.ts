@@ -42,20 +42,6 @@ export class RecipientChecker {
       });
     }
 
-    // 社外ドメインチェック
-    if (settings.warnExternalRecipients && settings.internalDomains.length > 0) {
-      const externalRecipients = DomainChecker.filterExternalEmails(allRecipients, settings.internalDomains);
-
-      if (externalRecipients.length > 0) {
-        results.push({
-          severity: 'warning',
-          category: 'recipient',
-          message: '社外への送信が含まれています',
-          details: `以下の社外アドレスへの送信が含まれています:\n${externalRecipients.join('\n')}`,
-        });
-      }
-    }
-
     // 複数の社外宛先がある場合のBccチェック
     if (settings.warnMultipleExternal && settings.internalDomains.length > 0) {
       const externalToCC = DomainChecker.filterExternalEmails([...mailData.to, ...mailData.cc], settings.internalDomains);
