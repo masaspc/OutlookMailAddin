@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outlook Send Guard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0078d4;
+            margin-bottom: 20px;
+        }
+        p {
+            line-height: 1.6;
+            color: #333;
+        }
+        .button {
+            display: inline-block;
+            background-color: #0078d4;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #005a9e;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .section {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Outlook Send Guard</h1>
+        <p>Outlook誤送信防止アドインへようこそ。</p>
+
+        <div class="section">
+            <h2>インストール方法</h2>
+            <p>以下のmanifest.xmlをOutlookに追加してください：</p>
+            <code>https://masaspc.github.io/OutlookMailAddin/manifest.xml</code>
+        </div>
+
+        <div class="section">
+            <h2>機能</h2>
+            <ul>
+                <li>外部ドメインへの送信時に確認ダイアログを表示</li>
+                <li>件名、本文、添付ファイルの確認</li>
+                <li>各項目をチェックしてから送信</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <a href="https://github.com/masaspc/OutlookMailAddin" class="button">GitHubで詳細を見る</a>
+        </div>
+    </div>
+</body>
+</html>
