@@ -140,7 +140,11 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     };
     const dataJson = JSON.stringify(dataToPass);
     const dataBase64 = btoa(encodeURIComponent(dataJson));
-    const dialogUrl = `https://localhost:3000/taskpane.html?data=${dataBase64}`;
+
+    // 現在の実行環境に応じてURLを生成
+    // commands.htmlと同じディレクトリのtaskpane.htmlを開く
+    const baseUrl = window.location.href.replace(/\/[^/]*$/, '');
+    const dialogUrl = `${baseUrl}/taskpane.html?data=${dataBase64}`;
 
     // ダイアログウィンドウを開く
     Office.context.ui.displayDialogAsync(
