@@ -168,13 +168,14 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
 
     // ダイアログウィンドウを開く
     // promptBeforeOpen: false でOfficeの許可プロンプトを無効化
-    // displayInIframe: true でURLバーを非表示（エラー9032が発生する可能性あり）
+    // displayInIframe: false でポップアップ表示（URLバーが表示される）
+    // displayInIframe: true はOnMessageSend + SoftBlockでError 9032を引き起こすため使用不可
     Office.context.ui.displayDialogAsync(
       dialogUrl,
       {
         height: 80,
         width: 60,
-        displayInIframe: true,
+        displayInIframe: false,
         promptBeforeOpen: false
       },
       (result) => {
