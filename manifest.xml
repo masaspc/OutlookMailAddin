@@ -54,10 +54,10 @@
             <!-- 送信イベントの拡張点 -->
             <!-- ユーザーが送信ボタンをクリックしたときに、ダイアログウィンドウを開いてチェックを実行 -->
             <ExtensionPoint xsi:type="LaunchEvent">
+              <SourceLocation resid="Commands.Url"/>
               <LaunchEvents>
                 <LaunchEvent Type="OnMessageSend" FunctionName="onMessageSend" SendMode="PromptUser" />
               </LaunchEvents>
-              <SourceLocation resid="Commands.Url"/>
             </ExtensionPoint>
           </DesktopFormFactor>
         </Host>
