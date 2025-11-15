@@ -266,20 +266,19 @@ body {
   background-color: #e7f5ff;
   padding: 12px;
   border-radius: 4px;
-  margin-bottom: 12px;
+  margin-top: 8px;
   font-size: 14px;
-  color: #1971c2;
+  color: #333;
   border: 1px solid #4dabf7;
-  font-weight: 500;
 }
 
 .body-preview {
   background-color: #e6fcf5;
   padding: 12px;
   border-radius: 4px;
-  margin-bottom: 12px;
+  margin-top: 8px;
   font-size: 13px;
-  color: #2f9e44;
+  color: #333;
   max-height: 150px;
   overflow-y: auto;
   white-space: pre-wrap;
@@ -290,7 +289,7 @@ body {
 .attachment-list {
   list-style: none;
   padding: 0;
-  margin: 12px 0;
+  margin: 8px 0 0 0;
 }
 
 .attachment-list li {
@@ -299,7 +298,7 @@ body {
   margin-bottom: 4px;
   border-radius: 4px;
   font-size: 14px;
-  color: #e67700;
+  color: #333;
   border: 1px solid #ffd43b;
 }
 

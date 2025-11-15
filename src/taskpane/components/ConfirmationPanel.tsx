@@ -167,7 +167,6 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
         {mailData.subject && mailData.subject.trim() !== '' && (
           <div className="section subject-section">
             <h3>📧 件名</h3>
-            <div className="subject-box">{mailData.subject}</div>
             <label className="checkbox-item">
               <input
                 type="checkbox"
@@ -176,6 +175,7 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
               />
               <span>件名を確認しました</span>
             </label>
+            <div className="subject-box">{mailData.subject}</div>
           </div>
         )}
 
@@ -183,7 +183,6 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
         {mailData.body && mailData.body.trim() !== '' && (
           <div className="section body-section">
             <h3>📝 本文（プレビュー）</h3>
-            <div className="body-preview">{this.getBodyPreview()}</div>
             <label className="checkbox-item">
               <input
                 type="checkbox"
@@ -192,6 +191,7 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
               />
               <span>本文を確認しました</span>
             </label>
+            <div className="body-preview">{this.getBodyPreview()}</div>
           </div>
         )}
 
@@ -199,13 +199,6 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
         {mailData.attachments && mailData.attachments.length > 0 && (
           <div className="section attachments-section">
             <h3>📎 添付ファイル</h3>
-            <ul className="attachment-list">
-              {mailData.attachments.map((attachment, index) => (
-                <li key={index}>
-                  {attachment.name} ({Math.round(attachment.size / 1024)} KB)
-                </li>
-              ))}
-            </ul>
             <label className="checkbox-item">
               <input
                 type="checkbox"
@@ -214,6 +207,13 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
               />
               <span>添付ファイルを確認しました</span>
             </label>
+            <ul className="attachment-list">
+              {mailData.attachments.map((attachment, index) => (
+                <li key={index}>
+                  {attachment.name} ({Math.round(attachment.size / 1024)} KB)
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 

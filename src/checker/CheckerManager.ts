@@ -19,19 +19,17 @@ export class CheckerManager {
     const results: CheckResult[] = [];
 
     try {
-      // すべてのチェックを並列実行
+      // すべてのチェックを並列実行（深夜・早朝と休日の警告は無効化）
       const [
         attachmentResults,
         recipientResults,
         subjectResults,
         bodyResults,
-        timeResults,
       ] = await Promise.all([
         Promise.resolve(AttachmentChecker.check(mailData, settings.attachmentCheck)),
         Promise.resolve(RecipientChecker.check(mailData, settings.recipientCheck)),
         Promise.resolve(SubjectChecker.check(mailData, settings.subjectCheck)),
         Promise.resolve(BodyChecker.check(mailData, settings.bodyCheck)),
-        Promise.resolve(TimeChecker.check(settings.timeCheck)),
       ]);
 
       // 結果を統合
@@ -39,8 +37,7 @@ export class CheckerManager {
         ...attachmentResults,
         ...recipientResults,
         ...subjectResults,
-        ...bodyResults,
-        ...timeResults
+        ...bodyResults
       );
 
       // 重要度順にソート（error > warning > info）
