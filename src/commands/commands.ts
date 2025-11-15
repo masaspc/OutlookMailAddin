@@ -44,7 +44,7 @@ function onMessageSend(event: Office.AddinCommands.Event) {
         const dialog = result.value;
 
         // ダイアログからのメッセージを受信
-        dialog.addEventHandler(Office.EventType.DialogMessageReceived, (arg: { message: string }) => {
+        dialog.addEventHandler(Office.EventType.DialogMessageReceived, (arg: any) => {
           try {
             const message = JSON.parse(arg.message);
 
@@ -67,7 +67,7 @@ function onMessageSend(event: Office.AddinCommands.Event) {
         });
 
         // ダイアログが閉じられた場合（×ボタンなど）
-        dialog.addEventHandler(Office.EventType.DialogEventReceived, (arg) => {
+        dialog.addEventHandler(Office.EventType.DialogEventReceived, (arg: any) => {
           console.log('DialogEventReceived:', arg);
           // 12006: ユーザーがダイアログを閉じた
           if (arg.error === 12006) {
@@ -80,7 +80,5 @@ function onMessageSend(event: Office.AddinCommands.Event) {
   );
 }
 
-// グローバルスコープに関数を登録
-(global as any).onMessageSend = onMessageSend;
-
+// Office.actionsに関数を登録
 Office.actions.associate('onMessageSend', onMessageSend);
