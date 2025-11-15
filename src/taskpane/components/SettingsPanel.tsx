@@ -99,16 +99,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSave, 
             有効化
           </label>
 
-          <div className="setting-item">
-            <label>社内ドメイン（カンマ区切り）:</label>
-            <textarea
-              value={localSettings.recipientCheck.internalDomains.join(', ')}
-              onChange={(e) => handleArrayChange('recipientCheck', 'internalDomains', e.target.value)}
-              rows={2}
-              placeholder="例: example.com, company.co.jp"
-            />
-          </div>
-
           <label className="checkbox-label">
             <input
               type="checkbox"

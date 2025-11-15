@@ -60,6 +60,8 @@ export class SettingsStorage {
       recipientCheck: {
         ...DEFAULT_SETTINGS.recipientCheck,
         ...settings.recipientCheck,
+        // internalDomainsは常にデフォルト値を使用（管理者が設定ファイルで管理）
+        internalDomains: DEFAULT_SETTINGS.recipientCheck.internalDomains,
       },
       subjectCheck: {
         ...DEFAULT_SETTINGS.subjectCheck,

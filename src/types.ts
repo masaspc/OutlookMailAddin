@@ -88,7 +88,7 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   recipientCheck: {
     enabled: true,
-    internalDomains: [],
+    internalDomains: ['tokyobaynet.co.jp'],
     warnExternalRecipients: true,
     warnMultipleExternal: true,
     maxRecipientCount: 50,
