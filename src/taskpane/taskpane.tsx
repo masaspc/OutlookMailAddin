@@ -62,18 +62,13 @@ class App extends React.Component<{}, AppState> {
       const dataBase64 = urlParams.get('data');
 
       if (!dataBase64) {
-        console.warn('URLパラメータにデータがありません。');
+        // URLパラメータがない場合は、リボンボタンから開かれたので設定画面を表示
+        console.log('リボンボタンから開かれました。設定画面を表示します。');
         this.setState({
-          checkResults: [
-            {
-              severity: 'error',
-              category: 'body',
-              message: 'データエラー',
-              details: 'メールデータの読み込みに失敗しました。',
-            },
-          ],
+          checkResults: [],
           mailData: null,
           isLoading: false,
+          isSettingsOpen: true,
         });
         return;
       }
@@ -160,6 +155,11 @@ class App extends React.Component<{}, AppState> {
    * 設定を閉じる
    */
   handleCloseSettings = () => {
+    // リボンボタンから開いた場合（mailDataがnull）は、設定画面を閉じない
+    if (this.state.mailData === null) {
+      // 何もしない（設定画面を開いたまま）
+      return;
+    }
     this.setState({ isSettingsOpen: false });
   };
 
