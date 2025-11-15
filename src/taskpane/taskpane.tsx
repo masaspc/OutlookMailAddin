@@ -169,7 +169,9 @@ class App extends React.Component<{}, AppState> {
   handleSaveSettings = async (settings: Settings) => {
     try {
       await SettingsStorage.saveSettings(settings);
-      this.setState({ settings, isSettingsOpen: false });
+      // リボンボタンから開いた場合（mailDataがnull）は、設定画面を開いたまま
+      const shouldCloseSettings = this.state.mailData !== null;
+      this.setState({ settings, isSettingsOpen: !shouldCloseSettings });
       alert('設定を保存しました。次回の送信時から反映されます。');
     } catch (error) {
       console.error('設定の保存に失敗しました:', error);
