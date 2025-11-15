@@ -1,0 +1,56 @@
+{
+  "name": "outlook-send-guard",
+  "version": "1.0.0",
+  "description": "Outlook誤送信防止アドイン",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "dev-server": "webpack serve --mode development",
+    "start": "office-addin-debugging start manifest.xml",
+    "stop": "office-addin-debugging stop manifest.xml",
+    "validate": "office-addin-manifest validate manifest.xml",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+  },
+  "keywords": [
+    "outlook",
+    "office-addin",
+    "mail-guard"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@fluentui/react-components": "^9.47.0",
+    "core-js": "^3.34.0",
+    "office-js": "^1.1.91",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "regenerator-runtime": "^0.14.1"
+  },
+  "devDependencies": {
+    "@types/office-js": "^1.0.376",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.6.0",
+    "office-addin-debugging": "^5.0.14",
+    "office-addin-dev-certs": "^1.13.2",
+    "office-addin-lint": "^2.3.2",
+    "office-addin-manifest": "^1.13.2",
+    "source-map-loader": "^4.0.1",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}
