@@ -146,20 +146,26 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     const baseUrl = window.location.href.replace(/\/[^/]*$/, '');
     const dialogUrl = `${baseUrl}/taskpane.html?data=${dataBase64}`;
 
+    console.log('Opening dialog with URL:', dialogUrl);
+    console.log('Base URL:', baseUrl);
+
     // ダイアログウィンドウを開く
     Office.context.ui.displayDialogAsync(
       dialogUrl,
       {
         height: 80,
         width: 60,
-        displayInIframe: false
+        displayInIframe: true
       },
       (result) => {
         if (result.status === Office.AsyncResultStatus.Failed) {
           console.error('ダイアログの表示に失敗しました:', result.error);
+          console.error('Error code:', result.error.code);
+          console.error('Error message:', result.error.message);
           // エラーの場合は送信を許可
           event.completed({ allowEvent: true });
         } else {
+          console.log('ダイアログが正常に開きました');
           const dialog = result.value;
 
           // ダイアログからのメッセージを受信
