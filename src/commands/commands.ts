@@ -168,12 +168,13 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
 
     // ダイアログウィンドウを開く
     // promptBeforeOpen: false でOfficeの許可プロンプトを無効化
+    // displayInIframe: true でURLバーを非表示（エラー9032が発生する可能性あり）
     Office.context.ui.displayDialogAsync(
       dialogUrl,
       {
         height: 80,
         width: 60,
-        displayInIframe: false,
+        displayInIframe: true,
         promptBeforeOpen: false
       },
       (result) => {

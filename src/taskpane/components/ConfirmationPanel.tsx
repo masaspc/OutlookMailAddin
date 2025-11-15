@@ -167,15 +167,17 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
         {mailData.subject && mailData.subject.trim() !== '' && (
           <div className="section subject-section">
             <h3>📧 件名</h3>
-            <label className="checkbox-item">
-              <input
-                type="checkbox"
-                checked={subjectConfirmed}
-                onChange={(e) => this.setState({ subjectConfirmed: e.target.checked })}
-              />
-              <span>件名を確認しました</span>
-            </label>
-            <div className="subject-box">{mailData.subject}</div>
+            <div className="horizontal-layout">
+              <label className="checkbox-item inline-checkbox">
+                <input
+                  type="checkbox"
+                  checked={subjectConfirmed}
+                  onChange={(e) => this.setState({ subjectConfirmed: e.target.checked })}
+                />
+                <span>件名を確認しました</span>
+              </label>
+              <div className="subject-box">{mailData.subject}</div>
+            </div>
           </div>
         )}
 
@@ -183,15 +185,17 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
         {mailData.body && mailData.body.trim() !== '' && (
           <div className="section body-section">
             <h3>📝 本文（プレビュー）</h3>
-            <label className="checkbox-item">
-              <input
-                type="checkbox"
-                checked={bodyConfirmed}
-                onChange={(e) => this.setState({ bodyConfirmed: e.target.checked })}
-              />
-              <span>本文を確認しました</span>
-            </label>
-            <div className="body-preview">{this.getBodyPreview()}</div>
+            <div className="horizontal-layout">
+              <label className="checkbox-item inline-checkbox">
+                <input
+                  type="checkbox"
+                  checked={bodyConfirmed}
+                  onChange={(e) => this.setState({ bodyConfirmed: e.target.checked })}
+                />
+                <span>本文を確認しました</span>
+              </label>
+              <div className="body-preview">{this.getBodyPreview()}</div>
+            </div>
           </div>
         )}
 
@@ -199,21 +203,23 @@ export class ConfirmationPanel extends React.Component<ConfirmationPanelProps, C
         {mailData.attachments && mailData.attachments.length > 0 && (
           <div className="section attachments-section">
             <h3>📎 添付ファイル</h3>
-            <label className="checkbox-item">
-              <input
-                type="checkbox"
-                checked={attachmentsConfirmed}
-                onChange={(e) => this.setState({ attachmentsConfirmed: e.target.checked })}
-              />
-              <span>添付ファイルを確認しました</span>
-            </label>
-            <ul className="attachment-list">
-              {mailData.attachments.map((attachment, index) => (
-                <li key={index}>
-                  {attachment.name} ({Math.round(attachment.size / 1024)} KB)
-                </li>
-              ))}
-            </ul>
+            <div className="horizontal-layout">
+              <label className="checkbox-item inline-checkbox">
+                <input
+                  type="checkbox"
+                  checked={attachmentsConfirmed}
+                  onChange={(e) => this.setState({ attachmentsConfirmed: e.target.checked })}
+                />
+                <span>添付ファイルを確認しました</span>
+              </label>
+              <ul className="attachment-list inline-attachments">
+                {mailData.attachments.map((attachment, index) => (
+                  <li key={index}>
+                    {attachment.name} ({Math.round(attachment.size / 1024)} KB)
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
 

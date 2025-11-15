@@ -262,6 +262,34 @@ body {
   color: #333;
 }
 
+/* 横並びレイアウト */
+.horizontal-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.inline-checkbox {
+  flex-shrink: 0;
+  min-width: 160px;
+  margin: 0;
+}
+
+.horizontal-layout .subject-box {
+  flex: 1;
+  margin-top: 0;
+}
+
+.horizontal-layout .body-preview {
+  flex: 1;
+  margin-top: 0;
+}
+
+.horizontal-layout .attachment-list {
+  flex: 1;
+  margin: 0;
+}
+
 .subject-box {
   background-color: #e7f5ff;
   padding: 12px;
