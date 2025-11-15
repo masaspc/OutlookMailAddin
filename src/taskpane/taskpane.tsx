@@ -1,14 +1,29 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
-import { CheckResultList } from './components/CheckResultList';
+import { ConfirmationPanel } from './components/ConfirmationPanel';
 import { SettingsPanel } from './components/SettingsPanel';
 import { CheckResult, Settings } from '../types';
 import { SettingsStorage } from '../storage/SettingsStorage';
 import './taskpane.css';
 
+interface MailDataDisplay {
+  subject: string;
+  body: string;
+  to: string[];
+  cc: string[];
+  bcc: string[];
+  attachments: Array<{
+    id: string;
+    name: string;
+    size: number;
+    attachmentType: string;
+  }>;
+}
+
 interface AppState {
   checkResults: CheckResult[];
+  mailData: MailDataDisplay | null;
   isLoading: boolean;
   isSettingsOpen: boolean;
   settings: Settings;
@@ -19,6 +34,7 @@ class App extends React.Component<{}, AppState> {
     super(props);
     this.state = {
       checkResults: [],
+      mailData: null,
       isLoading: true,
       isSettingsOpen: false,
       settings: SettingsStorage.loadSettings(),
@@ -34,7 +50,7 @@ class App extends React.Component<{}, AppState> {
   }
 
   /**
-   * URLパラメータからチェック結果を読み取る
+   * URLパラメータからチェック結果とメールデータを読み取る
    */
   loadCheckResults = () => {
     this.setState({ isLoading: true });
@@ -42,43 +58,47 @@ class App extends React.Component<{}, AppState> {
     try {
       // URLパラメータを取得
       const urlParams = new URLSearchParams(window.location.search);
-      const resultsBase64 = urlParams.get('results');
+      const dataBase64 = urlParams.get('data');
 
-      if (!resultsBase64) {
-        console.warn('URLパラメータにチェック結果がありません。問題なしとして扱います。');
+      if (!dataBase64) {
+        console.warn('URLパラメータにデータがありません。');
         this.setState({
           checkResults: [
             {
-              severity: 'info',
+              severity: 'error',
               category: 'body',
-              message: 'チェック完了',
-              details: '問題は検出されませんでした。',
+              message: 'データエラー',
+              details: 'メールデータの読み込みに失敗しました。',
             },
           ],
+          mailData: null,
           isLoading: false,
         });
         return;
       }
 
       // Base64デコードしてJSONパース
-      const resultsJson = decodeURIComponent(atob(resultsBase64));
-      const checkResults = JSON.parse(resultsJson);
+      const dataJson = decodeURIComponent(atob(dataBase64));
+      const data = JSON.parse(dataJson);
 
       this.setState({
-        checkResults,
+        checkResults: data.checkResults || [],
+        mailData: data.mailData || null,
+        settings: data.settings || this.state.settings,
         isLoading: false,
       });
     } catch (error) {
-      console.error('チェック結果の読み込みエラー:', error);
+      console.error('データの読み込みエラー:', error);
       this.setState({
         checkResults: [
           {
             severity: 'error',
             category: 'body',
-            message: 'チェックエラー',
-            details: 'チェック結果の読み込みに失敗しました。',
+            message: 'データエラー',
+            details: 'メールデータの読み込みに失敗しました。',
           },
         ],
+        mailData: null,
         isLoading: false,
       });
     }
@@ -137,7 +157,7 @@ class App extends React.Component<{}, AppState> {
   };
 
   render() {
-    const { checkResults, isLoading, isSettingsOpen, settings } = this.state;
+    const { checkResults, mailData, isLoading, isSettingsOpen, settings } = this.state;
 
     return (
       <FluentProvider theme={webLightTheme}>
@@ -150,29 +170,25 @@ class App extends React.Component<{}, AppState> {
             />
           ) : (
             <>
-              <div className="header">
-                <h2>送信前チェック</h2>
-                <button className="settings-button" onClick={this.handleOpenSettings}>
-                  ⚙️ 設定
-                </button>
-              </div>
-
-              <div className="content">
-                {isLoading ? (
-                  <div className="loading">チェック中...</div>
-                ) : (
-                  <CheckResultList results={checkResults} />
-                )}
-              </div>
-
-              <div className="footer">
-                <button className="send-button" onClick={this.handleSend}>
-                  送信する
-                </button>
-                <button className="cancel-button" onClick={this.handleCancel}>
-                  編集に戻る
-                </button>
-              </div>
+              {isLoading ? (
+                <div className="loading">チェック中...</div>
+              ) : mailData ? (
+                <ConfirmationPanel
+                  mailData={mailData}
+                  checkResults={checkResults}
+                  settings={settings}
+                  onSend={this.handleSend}
+                  onCancel={this.handleCancel}
+                />
+              ) : (
+                <div className="error-message">
+                  <h2>エラー</h2>
+                  <p>メールデータの読み込みに失敗しました。</p>
+                  <button className="cancel-button" onClick={this.handleCancel}>
+                    閉じる
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>

@@ -129,17 +129,34 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     // チェックを実行
     const checkResults = await CheckerManager.checkAll(mailData, settings);
 
-    // チェック結果をBase64エンコードしてURLパラメータとして渡す
-    const resultsJson = JSON.stringify(checkResults);
-    const resultsBase64 = btoa(encodeURIComponent(resultsJson));
-    const dialogUrl = `https://localhost:3000/taskpane.html?results=${resultsBase64}`;
+    // チェック結果とメールデータをBase64エンコードしてURLパラメータとして渡す
+    const dataToPass = {
+      checkResults,
+      mailData: {
+        subject: mailData.subject,
+        body: mailData.body,
+        to: mailData.to,
+        cc: mailData.cc,
+        bcc: mailData.bcc,
+        attachments: mailData.attachments.map((a: any) => ({
+          id: a.id,
+          name: a.name,
+          size: a.size,
+          attachmentType: a.attachmentType,
+        })),
+      },
+      settings,
+    };
+    const dataJson = JSON.stringify(dataToPass);
+    const dataBase64 = btoa(encodeURIComponent(dataJson));
+    const dialogUrl = `https://localhost:3000/taskpane.html?data=${dataBase64}`;
 
     // ダイアログウィンドウを開く
     Office.context.ui.displayDialogAsync(
       dialogUrl,
       {
-        height: 70,
-        width: 50,
+        height: 80,
+        width: 60,
         displayInIframe: false
       },
       (result) => {
