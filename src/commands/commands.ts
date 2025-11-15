@@ -143,12 +143,13 @@ async function onMessageSend(event: Office.AddinCommands.Event) {
     const dialogUrl = `https://localhost:3000/taskpane.html?data=${dataBase64}`;
 
     // ダイアログウィンドウを開く
+    // displayInIframe: true にすることで、許可ダイアログを表示させずに済む
     Office.context.ui.displayDialogAsync(
       dialogUrl,
       {
         height: 80,
         width: 60,
-        displayInIframe: false
+        displayInIframe: true
       },
       (result) => {
         if (result.status === Office.AsyncResultStatus.Failed) {
