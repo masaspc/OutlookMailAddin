@@ -73,10 +73,10 @@
           <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
         </bt:Urls>
         <bt:ShortStrings>
-          <!-- 将来的な拡張用 -->
+          <bt:String id="GroupLabel" DefaultValue="Send Guard"/>
         </bt:ShortStrings>
         <bt:LongStrings>
-          <!-- 将来的な拡張用 -->
+          <bt:String id="GroupDescription" DefaultValue="Outlook Send Guard"/>
         </bt:LongStrings>
       </Resources>
     </VersionOverrides>
